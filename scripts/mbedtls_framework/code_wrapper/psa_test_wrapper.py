@@ -25,8 +25,7 @@ class PSATestWrapper(PSAWrapper):
 
     _PSA_WRAPPER_INCLUDES = ['<psa/crypto.h>',
                              '<test/memory.h>',
-                             '<test/psa_crypto_helpers.h>',
-                             '<test/psa_test_wrappers.h>']
+                             '<test/psa_crypto_helpers.h>']
 
 class PSALoggingTestWrapper(PSATestWrapper, PSALoggingWrapper):
     """Generate a C source file containing wrapper functions that log PSA Crypto API calls."""

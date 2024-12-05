@@ -7,6 +7,7 @@
 import argparse
 import itertools
 import os
+import re
 from typing import Any, Iterator, List, Dict, Collection, Optional, Tuple
 
 from .. import build_tree
@@ -224,8 +225,12 @@ class PSAWrapper(c_wrapper_generator.Base):
             prologue.append("#if {}".format(self._cpp_guards))
             prologue.append('')
 
-        for include in self._PSA_WRAPPER_INCLUDES:
-            prologue.append("#include {}".format(include))
+        if header:
+            for include in self._PSA_WRAPPER_INCLUDES:
+                prologue.append("#include {}".format(include))
+        else:
+            header_short_path = re.sub(r'\A(.*/)?include/', r'', self.out_h_f)
+            prologue.append("#include <{}>".format(header_short_path))
 
         # Make certain there is an empty line at the end of this section.
         for i in [-1, -2]:
