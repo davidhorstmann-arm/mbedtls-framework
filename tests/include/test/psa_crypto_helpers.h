@@ -19,6 +19,10 @@
 #include <psa/crypto.h>
 #include <mbedtls/ctr_drbg.h>
 
+/* Macros that override standard functions when MBEDTLS_TEST_HOOKS is enabled
+ * to add test instrumentation. */
+#include "test/psa_test_wrappers.h"
+
 #if defined(MBEDTLS_PSA_CRYPTO_C)
 /** Initialize the PSA Crypto subsystem. */
 #define PSA_INIT() PSA_ASSERT(psa_crypto_init())
