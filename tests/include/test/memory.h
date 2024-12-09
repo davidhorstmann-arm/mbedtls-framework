@@ -72,16 +72,25 @@
  */
 extern _Thread_local unsigned int mbedtls_test_memory_poisoning_count;
 
+/* Struct for a linked list of the buffers poisoned at any time. */
+typedef struct poisoned_buf_s {
+    const unsigned char *ptr;
+    struct poisoned_buf_s *next;
+} poisoned_buf_t;
+
+extern _Thread_local poisoned_buf_t *poisoned_bufs_head;
+
 /** Poison a memory area so that any attempt to read or write from it will
  * cause a runtime failure.
  *
  * The behavior is undefined if any part of the memory area is invalid.
  */
 void mbedtls_test_memory_poison(const unsigned char *ptr, size_t size);
+void mbedtls_test_memory_poison_wrapper(const unsigned char *ptr, size_t size);
 #define MBEDTLS_TEST_MEMORY_POISON(ptr, size)    \
     do { \
         mbedtls_test_memory_poisoning_count++; \
-        mbedtls_test_memory_poison(ptr, size); \
+        mbedtls_test_memory_poison_wrapper(ptr, size); \
     } while (0)
 
 /** Undo the effect of mbedtls_test_memory_poison().
@@ -92,13 +101,19 @@ void mbedtls_test_memory_poison(const unsigned char *ptr, size_t size);
  * or if the memory area contains a mixture of poisoned and unpoisoned parts.
  */
 void mbedtls_test_memory_unpoison(const unsigned char *ptr, size_t size);
+void mbedtls_test_memory_unpoison_wrapper(const unsigned char *ptr, size_t size);
 #define MBEDTLS_TEST_MEMORY_UNPOISON(ptr, size)    \
     do { \
-        mbedtls_test_memory_unpoison(ptr, size); \
+        mbedtls_test_memory_unpoison_wrapper(ptr, size); \
         if (mbedtls_test_memory_poisoning_count != 0) { \
             mbedtls_test_memory_poisoning_count--; \
         } \
     } while (0)
+
+
+void mbedtls_test_memory_poison_hook(const unsigned char *ptr, size_t size);
+
+void mbedtls_test_memory_unpoison_hook(const unsigned char *ptr, size_t size);
 
 #else /* MBEDTLS_TEST_MEMORY_CAN_POISON */
 #define MBEDTLS_TEST_MEMORY_POISON(ptr, size) ((void) (ptr), (void) (size))

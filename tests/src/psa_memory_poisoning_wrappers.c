@@ -14,10 +14,12 @@
 
 void mbedtls_poison_test_hooks_setup(void)
 {
-    psa_input_pre_copy_hook = mbedtls_test_memory_unpoison;
-    psa_input_post_copy_hook = mbedtls_test_memory_poison;
-    psa_output_pre_copy_hook = mbedtls_test_memory_unpoison;
-    psa_output_post_copy_hook = mbedtls_test_memory_poison;
+    psa_input_pre_copy_hook = mbedtls_test_memory_unpoison_hook;
+    psa_input_post_copy_hook = mbedtls_test_memory_poison_hook;
+    psa_output_pre_copy_hook = mbedtls_test_memory_unpoison_hook;
+    psa_output_post_copy_hook = mbedtls_test_memory_poison_hook;
+
+    poisoned_bufs_head = NULL;
 }
 
 void mbedtls_poison_test_hooks_teardown(void)
